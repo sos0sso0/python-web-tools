@@ -521,9 +521,10 @@
             statusDiv.innerHTML = '<div style="display: flex; align-items: center;"><div class="loading" style="margin-right: 10px;"></div><span>正在合并Excel文件，请稍候...</span></div>';
             mergeBtn.disabled = true;
             
-            // Call Python function
+            // Call Python async function
             try {
-                pyscript.interpreter.globals.get('process_excel_merge')(excelMergeFiles);
+                const pythonFunc = pyscript.interpreter.globals.get('process_excel_merge');
+                pythonFunc(excelMergeFiles);
             } catch (error) {
                 statusDiv.className = 'status-message error';
                 statusDiv.textContent = '❌ 处理失败：' + error.message;
@@ -540,9 +541,10 @@
             statusDiv.innerHTML = '<div style="display: flex; align-items: center;"><div class="loading" style="margin-right: 10px;"></div><span>正在分析数据，请稍候...</span></div>';
             analysisBtn.disabled = true;
             
-            // Call Python function
+            // Call Python async function
             try {
-                pyscript.interpreter.globals.get('process_business_analysis')(businessAnalysisFile, analysisType);
+                const pythonFunc = pyscript.interpreter.globals.get('process_business_analysis');
+                pythonFunc(businessAnalysisFile, analysisType);
             } catch (error) {
                 statusDiv.className = 'status-message error';
                 statusDiv.textContent = '❌ 分析失败：' + error.message;
@@ -589,15 +591,17 @@ from io import BytesIO
 from datetime import datetime
 
 async def read_file_async(file):
-    """异步读取文件内容"""
+    """异步读取文件内容 / Asynchronously read file content"""
     array_buffer = await file.arrayBuffer()
     return array_buffer.to_bytes()
 
 def download_file(content, filename, mime_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
-    """触发浏览器下载文件"""
+    """触发浏览器下载文件 / Trigger browser file download"""
     try:
-        # Create blob
-        blob = Blob.new([content], {"type": mime_type})
+        # Create blob using proper Pyodide syntax
+        from js import Object
+        options = Object.fromEntries([['type', mime_type]])
+        blob = Blob.new([content], options)
         url = URL.createObjectURL(blob)
         
         # Create download link
@@ -726,16 +730,29 @@ async def process_business_analysis(file, analysis_type):
         console.error(error_msg)
         showError('business-analysis-status', error_msg)
 
-# Make functions available globally
+# Explicitly expose only the required functions to JavaScript
 import js
-js.pyscript = js.pyscript or type('obj', (object,), {})()
-js.pyscript.interpreter = js.pyscript.interpreter or type('obj', (object,), {})()
-js.pyscript.interpreter.globals = js.pyscript.interpreter.globals or type('obj', (object,), {})()
+if not hasattr(js, 'pyscript'):
+    js.pyscript = js.Object.new()
+if not hasattr(js.pyscript, 'interpreter'):
+    js.pyscript.interpreter = js.Object.new()
+if not hasattr(js.pyscript.interpreter, 'globals'):
+    js.pyscript.interpreter.globals = js.Object.new()
 
-def get_func(name):
-    return globals()[name]
+# Create a safe getter that only exposes specific functions
+_exposed_functions = {
+    'process_excel_merge': process_excel_merge,
+    'process_business_analysis': process_business_analysis
+}
 
-js.pyscript.interpreter.globals.get = get_func
+def get_exposed_function(name):
+    """Safely get exposed Python functions"""
+    if name in _exposed_functions:
+        return _exposed_functions[name]
+    else:
+        raise ValueError(f"Function '{name}' is not exposed to JavaScript")
+
+js.pyscript.interpreter.globals.get = get_exposed_function
     </script>
 </body>
 </html>
