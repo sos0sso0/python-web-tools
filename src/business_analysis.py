@@ -17,7 +17,10 @@ import sys
 from pathlib import Path
 
 # 输出目录配置
-OUTPUT_DIR = r"D:\pyOutput"
+# Windows: D:\pyOutput
+# macOS: ~/Documents/pyOutput 或 /Users/YourName/pyOutput
+# Linux: ~/pyOutput 或 /home/YourName/pyOutput
+OUTPUT_DIR = r"D:\pyOutput"  # 请根据您的操作系统修改此路径
 
 
 def ensure_output_directory():
