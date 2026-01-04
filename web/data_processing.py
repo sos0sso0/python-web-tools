@@ -63,7 +63,7 @@ async def process_excel_merge(files):
         
         # Save to BytesIO
         output = BytesIO()
-        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        with pd.ExcelWriter(output) as writer:
             merged_df.to_excel(writer, index=False, sheet_name='Merged Data')
         
         # Get the content
