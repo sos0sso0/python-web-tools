@@ -77,12 +77,21 @@ pip install pandas openpyxl matplotlib
 ```
 python-web-tools/
 ├── index.html              # 主网页界面
-├── src/                    # Python脚本目录
+├── web/                    # 网页版Python代码（在浏览器中运行）
+│   └── data_processing.py  # 网页数据处理逻辑
+├── src/                    # 本地Python脚本（供下载使用）
 │   ├── excel_merge.py      # Excel文件合并工具
 │   └── business_analysis.py # 经营分析工具
 ├── docs/                   # 文档目录
+├── DEPLOYMENT.md           # 部署和更新指南
 └── README.md               # 项目说明
 ```
+
+**重要说明**: 
+- `/web/` 目录包含在浏览器中运行的Python代码（通过PyScript）
+- `/src/` 目录包含供用户下载的独立命令行脚本
+- 要更新在线界面功能，请修改 `/web/data_processing.py`
+- 详细部署说明请参阅 [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ## 📝 开发说明
 
