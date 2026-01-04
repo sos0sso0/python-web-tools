@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>基于Python的数据处理模型</title>
+    
+    <!-- PyScript CSS and JS -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -171,6 +176,156 @@
             border-radius: 3px;
             font-family: 'Courier New', monospace;
         }
+        
+        .upload-section {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+        
+        .upload-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .file-input-label {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+        
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .file-list {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            min-height: 50px;
+        }
+        
+        .file-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .process-btn {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        .process-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .process-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .status-message.info {
+            display: block;
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .status-message.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-message.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        #pyscript-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: white;
+            font-size: 1.2em;
+        }
+        
+        #pyscript-loading.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -190,30 +345,44 @@
             <div id="excel-merge" class="function-section active">
                 <div class="description">
                     <h2>📊 Excel文件合并</h2>
-                    <p>将多个Excel文件合并成一个文件，支持多种合并方式。</p>
+                    <p>在浏览器中直接合并多个Excel文件，无需下载或安装任何软件。所有处理均在您的浏览器中完成。</p>
                 </div>
                 
-                <div class="download-section">
-                    <h3>下载Python脚本</h3>
-                    <p>下载以下脚本到您的本地计算机：</p>
-                    <a href="src/excel_merge.py" download class="download-btn">📥 下载 excel_merge.py</a>
+                <div class="upload-section">
+                    <h3>上传Excel文件</h3>
+                    <p>选择需要合并的Excel文件（支持 .xlsx 和 .xls 格式）：</p>
+                    
+                    <div class="file-input-wrapper">
+                        <label class="file-input-label">
+                            📁 选择文件
+                            <input type="file" id="excel-merge-files" multiple accept=".xlsx,.xls" onchange="handleExcelMergeFiles(event)">
+                        </label>
+                    </div>
+                    
+                    <div id="excel-merge-file-list" class="file-list">
+                        <p style="color: #6c757d;">尚未选择文件</p>
+                    </div>
+                    
+                    <button id="excel-merge-btn" class="process-btn" onclick="mergeExcelFiles()" disabled>
+                        🔄 开始合并
+                    </button>
+                    
+                    <div id="excel-merge-status" class="status-message"></div>
                 </div>
                 
                 <div class="instructions">
                     <h4>使用说明：</h4>
                     <ol>
-                        <li>确保您的计算机已安装Python 3.x版本</li>
-                        <li>安装所需依赖：<code>pip install pandas openpyxl</code></li>
-                        <li>下载 <code>excel_merge.py</code> 文件到您的电脑</li>
-                        <li>准备好需要合并的Excel文件，放在同一个文件夹中</li>
-                        <li>运行脚本：<code>python excel_merge.py</code></li>
-                        <li>按照提示选择要处理的文件</li>
-                        <li>处理结果将保存在 <code>D:\pyOutput</code> 目录中</li>
+                        <li>点击"选择文件"按钮，选择需要合并的Excel文件（至少2个文件）</li>
+                        <li>查看文件列表确认选择的文件</li>
+                        <li>点击"开始合并"按钮，等待处理完成</li>
+                        <li>处理完成后，合并的文件会自动下载</li>
+                        <li><strong>首次使用时，系统需要加载Python环境，可能需要等待几秒钟</strong></li>
                     </ol>
                 </div>
                 
                 <div class="note">
-                    <strong>注意：</strong> 所有文件处理均在您的本地计算机上完成，不会上传任何数据到服务器，确保您的数据安全。
+                    <strong>注意：</strong> 所有文件处理均在您的浏览器中完成，不会上传任何数据到服务器，确保您的数据完全安全。
                 </div>
             </div>
             
@@ -221,36 +390,76 @@
             <div id="business-analysis" class="function-section">
                 <div class="description">
                     <h2>📈 经营分析</h2>
-                    <p>对业务数据进行深入分析，生成各类经营报表和图表。</p>
+                    <p>在浏览器中直接分析业务数据，生成经营报表和图表，无需下载或安装任何软件。</p>
                 </div>
                 
-                <div class="download-section">
-                    <h3>下载Python脚本</h3>
-                    <p>下载以下脚本到您的本地计算机：</p>
-                    <a href="src/business_analysis.py" download class="download-btn">📥 下载 business_analysis.py</a>
+                <div class="upload-section">
+                    <h3>上传数据文件</h3>
+                    <p>选择需要分析的Excel数据文件：</p>
+                    
+                    <div class="file-input-wrapper">
+                        <label class="file-input-label">
+                            📁 选择文件
+                            <input type="file" id="business-analysis-file" accept=".xlsx,.xls" onchange="handleBusinessAnalysisFile(event)">
+                        </label>
+                    </div>
+                    
+                    <div id="business-analysis-file-list" class="file-list">
+                        <p style="color: #6c757d;">尚未选择文件</p>
+                    </div>
+                    
+                    <div style="margin: 15px 0;">
+                        <label for="analysis-type" style="font-weight: bold; margin-right: 10px;">分析类型：</label>
+                        <select id="analysis-type" style="padding: 8px 15px; border-radius: 5px; border: 1px solid #ced4da;">
+                            <option value="sales">销售数据分析</option>
+                            <option value="financial">财务数据分析</option>
+                            <option value="comprehensive">综合经营分析</option>
+                        </select>
+                    </div>
+                    
+                    <button id="business-analysis-btn" class="process-btn" onclick="analyzeBusinessData()" disabled>
+                        📊 开始分析
+                    </button>
+                    
+                    <div id="business-analysis-status" class="status-message"></div>
                 </div>
                 
                 <div class="instructions">
                     <h4>使用说明：</h4>
                     <ol>
-                        <li>确保您的计算机已安装Python 3.x版本</li>
-                        <li>安装所需依赖：<code>pip install pandas openpyxl matplotlib</code></li>
-                        <li>下载 <code>business_analysis.py</code> 文件到您的电脑</li>
-                        <li>准备好需要分析的Excel数据文件</li>
-                        <li>运行脚本：<code>python business_analysis.py</code></li>
-                        <li>按照提示选择要分析的文件</li>
-                        <li>分析结果将保存在 <code>D:\pyOutput</code> 目录中</li>
+                        <li>点击"选择文件"按钮，选择需要分析的Excel数据文件</li>
+                        <li>选择分析类型（销售、财务或综合分析）</li>
+                        <li>点击"开始分析"按钮，等待处理完成</li>
+                        <li>处理完成后，分析报表和图表会自动下载</li>
+                        <li><strong>首次使用时，系统需要加载Python环境，可能需要等待几秒钟</strong></li>
                     </ol>
                 </div>
                 
                 <div class="note">
-                    <strong>注意：</strong> 所有文件处理均在您的本地计算机上完成，不会上传任何数据到服务器，确保您的数据安全。
+                    <strong>注意：</strong> 所有文件处理均在您的浏览器中完成，不会上传任何数据到服务器，确保您的数据完全安全。
                 </div>
             </div>
         </div>
     </div>
     
+    <!-- Loading indicator for PyScript -->
+    <div id="pyscript-loading">
+        <div>
+            <div class="loading"></div>
+            <p style="margin-top: 20px;">正在加载Python环境，请稍候...</p>
+        </div>
+    </div>
+    
     <script>
+        // Global variables to store uploaded files
+        let excelMergeFiles = [];
+        let businessAnalysisFile = null;
+        
+        // Hide loading indicator when PyScript is ready
+        document.addEventListener('py:ready', function() {
+            document.getElementById('pyscript-loading').classList.add('hidden');
+        });
+        
         function showSection(sectionId) {
             // Hide all sections
             const sections = document.querySelectorAll('.function-section');
@@ -266,6 +475,267 @@
             // Add active class to clicked menu item
             event.target.classList.add('active');
         }
+        
+        function handleExcelMergeFiles(event) {
+            excelMergeFiles = Array.from(event.target.files);
+            const fileList = document.getElementById('excel-merge-file-list');
+            const mergeBtn = document.getElementById('excel-merge-btn');
+            
+            if (excelMergeFiles.length === 0) {
+                fileList.innerHTML = '<p style="color: #6c757d;">尚未选择文件</p>';
+                mergeBtn.disabled = true;
+            } else {
+                let html = '<p style="font-weight: bold; margin-bottom: 10px;">已选择 ' + excelMergeFiles.length + ' 个文件：</p>';
+                excelMergeFiles.forEach((file, index) => {
+                    html += '<div class="file-item">' + 
+                            '<span>📄 ' + file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)</span>' +
+                            '</div>';
+                });
+                fileList.innerHTML = html;
+                mergeBtn.disabled = excelMergeFiles.length < 2;
+            }
+        }
+        
+        function handleBusinessAnalysisFile(event) {
+            const files = event.target.files;
+            businessAnalysisFile = files.length > 0 ? files[0] : null;
+            const fileList = document.getElementById('business-analysis-file-list');
+            const analysisBtn = document.getElementById('business-analysis-btn');
+            
+            if (businessAnalysisFile) {
+                fileList.innerHTML = '<div class="file-item">' +
+                                   '<span>📄 ' + businessAnalysisFile.name + ' (' + (businessAnalysisFile.size / 1024).toFixed(2) + ' KB)</span>' +
+                                   '</div>';
+                analysisBtn.disabled = false;
+            } else {
+                fileList.innerHTML = '<p style="color: #6c757d;">尚未选择文件</p>';
+                analysisBtn.disabled = true;
+            }
+        }
+        
+        function mergeExcelFiles() {
+            const statusDiv = document.getElementById('excel-merge-status');
+            const mergeBtn = document.getElementById('excel-merge-btn');
+            
+            statusDiv.className = 'status-message info';
+            statusDiv.innerHTML = '<div style="display: flex; align-items: center;"><div class="loading" style="margin-right: 10px;"></div><span>正在合并Excel文件，请稍候...</span></div>';
+            mergeBtn.disabled = true;
+            
+            // Call Python function
+            try {
+                pyscript.interpreter.globals.get('process_excel_merge')(excelMergeFiles);
+            } catch (error) {
+                statusDiv.className = 'status-message error';
+                statusDiv.textContent = '❌ 处理失败：' + error.message;
+                mergeBtn.disabled = false;
+            }
+        }
+        
+        function analyzeBusinessData() {
+            const statusDiv = document.getElementById('business-analysis-status');
+            const analysisBtn = document.getElementById('business-analysis-btn');
+            const analysisType = document.getElementById('analysis-type').value;
+            
+            statusDiv.className = 'status-message info';
+            statusDiv.innerHTML = '<div style="display: flex; align-items: center;"><div class="loading" style="margin-right: 10px;"></div><span>正在分析数据，请稍候...</span></div>';
+            analysisBtn.disabled = true;
+            
+            // Call Python function
+            try {
+                pyscript.interpreter.globals.get('process_business_analysis')(businessAnalysisFile, analysisType);
+            } catch (error) {
+                statusDiv.className = 'status-message error';
+                statusDiv.textContent = '❌ 分析失败：' + error.message;
+                analysisBtn.disabled = false;
+            }
+        }
+        
+        // Helper function to show success message
+        function showSuccess(elementId, message) {
+            const statusDiv = document.getElementById(elementId);
+            statusDiv.className = 'status-message success';
+            statusDiv.textContent = message;
+            
+            // Re-enable button
+            if (elementId === 'excel-merge-status') {
+                document.getElementById('excel-merge-btn').disabled = false;
+            } else if (elementId === 'business-analysis-status') {
+                document.getElementById('business-analysis-btn').disabled = false;
+            }
+        }
+        
+        // Helper function to show error message
+        function showError(elementId, message) {
+            const statusDiv = document.getElementById(elementId);
+            statusDiv.className = 'status-message error';
+            statusDiv.textContent = message;
+            
+            // Re-enable button
+            if (elementId === 'excel-merge-status') {
+                document.getElementById('excel-merge-btn').disabled = false;
+            } else if (elementId === 'business-analysis-status') {
+                document.getElementById('business-analysis-btn').disabled = false;
+            }
+        }
+    </script>
+    
+    <!-- PyScript Configuration and Python Code -->
+    <script type="py" config='{"packages": ["pandas", "openpyxl"]}'>
+import asyncio
+from pyodide.ffi import create_proxy
+from js import document, showSuccess, showError, Blob, URL, console
+import pandas as pd
+from io import BytesIO
+from datetime import datetime
+
+async def read_file_async(file):
+    """异步读取文件内容"""
+    array_buffer = await file.arrayBuffer()
+    return array_buffer.to_bytes()
+
+def download_file(content, filename, mime_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
+    """触发浏览器下载文件"""
+    try:
+        # Create blob
+        blob = Blob.new([content], {"type": mime_type})
+        url = URL.createObjectURL(blob)
+        
+        # Create download link
+        a = document.createElement('a')
+        a.href = url
+        a.download = filename
+        a.click()
+        
+        # Clean up
+        URL.revokeObjectURL(url)
+        return True
+    except Exception as e:
+        console.error(f"Download error: {str(e)}")
+        return False
+
+async def process_excel_merge(files):
+    """处理Excel文件合并"""
+    try:
+        console.log(f"Processing {len(files)} files for merge")
+        
+        # Read all files
+        dfs = []
+        for file in files:
+            console.log(f"Reading file: {file.name}")
+            content = await read_file_async(file)
+            df = pd.read_excel(BytesIO(content))
+            dfs.append(df)
+            console.log(f"Read {len(df)} rows from {file.name}")
+        
+        # Merge dataframes (concatenate by rows)
+        merged_df = pd.concat(dfs, ignore_index=True)
+        console.log(f"Merged result has {len(merged_df)} rows")
+        
+        # Save to BytesIO
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            merged_df.to_excel(writer, index=False, sheet_name='Merged Data')
+        
+        # Get the content
+        output.seek(0)
+        result_content = output.read()
+        
+        # Generate filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"merged_excel_{timestamp}.xlsx"
+        
+        # Download file
+        if download_file(result_content, filename):
+            showSuccess('excel-merge-status', f'✅ 合并成功！文件已下载：{filename}')
+        else:
+            showError('excel-merge-status', '❌ 文件下载失败，请重试')
+            
+    except Exception as e:
+        error_msg = f"❌ 合并失败：{str(e)}"
+        console.error(error_msg)
+        showError('excel-merge-status', error_msg)
+
+async def process_business_analysis(file, analysis_type):
+    """处理经营分析"""
+    try:
+        console.log(f"Analyzing file: {file.name}, type: {analysis_type}")
+        
+        # Read file
+        content = await read_file_async(file)
+        df = pd.read_excel(BytesIO(content))
+        console.log(f"Read {len(df)} rows, {len(df.columns)} columns")
+        
+        # Perform basic analysis based on type
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            # Original data
+            df.to_excel(writer, sheet_name='原始数据', index=False)
+            
+            # Basic statistics
+            if len(df.select_dtypes(include=['number']).columns) > 0:
+                stats_df = df.describe()
+                stats_df.to_excel(writer, sheet_name='统计摘要')
+            
+            # Analysis type specific processing
+            if analysis_type == 'sales':
+                # Sales analysis placeholder
+                summary_sheet = pd.DataFrame({
+                    '分析项': ['总行数', '总列数', '数值列数'],
+                    '结果': [len(df), len(df.columns), len(df.select_dtypes(include=['number']).columns)]
+                })
+                summary_sheet.to_excel(writer, sheet_name='销售分析', index=False)
+                
+            elif analysis_type == 'financial':
+                # Financial analysis placeholder
+                summary_sheet = pd.DataFrame({
+                    '分析项': ['总行数', '总列数', '数值列数'],
+                    '结果': [len(df), len(df.columns), len(df.select_dtypes(include=['number']).columns)]
+                })
+                summary_sheet.to_excel(writer, sheet_name='财务分析', index=False)
+                
+            else:  # comprehensive
+                # Comprehensive analysis
+                summary_sheet = pd.DataFrame({
+                    '分析项': ['总行数', '总列数', '数值列数', '文本列数'],
+                    '结果': [
+                        len(df), 
+                        len(df.columns), 
+                        len(df.select_dtypes(include=['number']).columns),
+                        len(df.select_dtypes(include=['object']).columns)
+                    ]
+                })
+                summary_sheet.to_excel(writer, sheet_name='综合分析', index=False)
+        
+        # Get the content
+        output.seek(0)
+        result_content = output.read()
+        
+        # Generate filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        analysis_type_cn = {'sales': '销售', 'financial': '财务', 'comprehensive': '综合'}
+        filename = f"{analysis_type_cn.get(analysis_type, '综合')}分析报告_{timestamp}.xlsx"
+        
+        # Download file
+        if download_file(result_content, filename):
+            showSuccess('business-analysis-status', f'✅ 分析完成！报告已下载：{filename}')
+        else:
+            showError('business-analysis-status', '❌ 报告下载失败，请重试')
+            
+    except Exception as e:
+        error_msg = f"❌ 分析失败：{str(e)}"
+        console.error(error_msg)
+        showError('business-analysis-status', error_msg)
+
+# Make functions available globally
+import js
+js.pyscript = js.pyscript or type('obj', (object,), {})()
+js.pyscript.interpreter = js.pyscript.interpreter or type('obj', (object,), {})()
+js.pyscript.interpreter.globals = js.pyscript.interpreter.globals or type('obj', (object,), {})()
+
+def get_func(name):
+    return globals()[name]
+
+js.pyscript.interpreter.globals.get = get_func
     </script>
 </body>
 </html>
