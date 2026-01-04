@@ -6,7 +6,7 @@ Excel文件合并工具
 
 功能说明：
 - 合并多个Excel文件到一个文件中
-- 支持Excel (. xlsx, .xls) 和 CSV 文件
+- 支持Excel (.xlsx, .xls) 和 CSV 文件
 - 可选择是否在第一列插入来源文件名
 - 支持输出为CSV或Excel格式
 - 自动创建输出目录
@@ -44,7 +44,7 @@ def select_excel_files():
     print("Excel/CSV文件合并工具")
     print("="*50)
     print("\n请输入要合并的Excel/CSV文件路径（每行一个，输入空行结束）：")
-    print("支持的格式:  .xlsx, .xls, . csv")
+    print("支持的格式: .xlsx, .xls, .csv")
     
     files = []
     while True:
@@ -57,7 +57,7 @@ def select_excel_files():
         
         if os.path.exists(file_path):
             # 检查文件格式
-            file_ext = os.path. splitext(file_path)[1].lower()
+            file_ext = os.path.splitext(file_path)[1].lower()
             if file_ext in ['.xlsx', '.xls', '.csv']:
                 files.append(file_path)
                 print(f"  ✓ 已添加: {os.path.basename(file_path)}")
@@ -107,12 +107,12 @@ def merge_excel_files(file_list):
             print(f"  读取:  {os.path.basename(file_path)}")
             
             # 根据文件扩展名选择读取方式
-            file_ext = os. path.splitext(file_path)[1].lower()
+            file_ext = os.path.splitext(file_path)[1].lower()
             
-            if file_ext in ['. xlsx', '.xls']: 
+            if file_ext in ['.xlsx', '.xls']: 
                 # 读取Excel文件的第一个sheet
                 data = pd.read_excel(file_path, sheet_name=0)
-            else:  # . csv
+            else:  # .csv
                 data = pd.read_csv(file_path, encoding='utf-8')
             
             # 如果需要，插入来源文件名
@@ -139,7 +139,7 @@ def merge_excel_files(file_list):
         output_file = os.path.join(OUTPUT_DIR, f"merged_result_{timestamp}.csv")
         df.to_csv(output_file, encoding='utf_8_sig', index=False)
     else:
-        output_file = os. path.join(OUTPUT_DIR, f"merged_result_{timestamp}. xlsx")
+        output_file = os.path.join(OUTPUT_DIR, f"merged_result_{timestamp}.xlsx")
         with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
             df.to_excel(writer, index=False, sheet_name='Merged Data')
     
