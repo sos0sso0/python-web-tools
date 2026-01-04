@@ -21,10 +21,18 @@ async def read_file_async(file):
 def download_file(content, filename, mime_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
     """触发浏览器下载文件 / Trigger browser file download"""
     try:
-        # Create blob using proper Pyodide syntax
-        from js import Object
-        options = Object.fromEntries([['type', mime_type]])
-        blob = Blob.new([content], options)
+        # Convert Python bytes to JavaScript Uint8Array for proper binary handling
+        from js import Uint8Array
+        # Ensure content is bytes, then convert to Uint8Array for Blob API
+        if isinstance(content, (bytes, bytearray)):
+            js_array = Uint8Array.new(len(content))
+            js_array.assign(content)
+        else:
+            # If already a buffer-like object, try direct conversion
+            js_array = Uint8Array.new(content)
+        
+        # Create blob with proper binary data
+        blob = Blob.new([js_array], {"type": mime_type})
         url = URL.createObjectURL(blob)
         
         # Create download link
@@ -50,7 +58,7 @@ async def process_excel_merge(files):
         for file in files:
             console.log(f"Reading file: {file.name}")
             content = await read_file_async(file)
-            df = pd.read_excel(BytesIO(content))
+            df = pd.read_excel(BytesIO(content), engine='openpyxl')
             dfs.append(df)
             console.log(f"Read {len(df)} rows from {file.name}")
         
@@ -66,6 +74,7 @@ async def process_excel_merge(files):
         # Get the content
         output.seek(0)
         result_content = output.read()
+        console.log(f"Generated Excel file with {len(result_content)} bytes")
         
         # Generate filename with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -80,6 +89,9 @@ async def process_excel_merge(files):
     except Exception as e:
         error_msg = f"❌ 合并失败：{str(e)}"
         console.error(error_msg)
+        console.error(f"Error details: {e.__class__.__name__}")
+        import traceback
+        console.error(traceback.format_exc())
         showError('excel-merge-status', error_msg)
 
 async def process_business_analysis(file, analysis_type):
@@ -89,7 +101,7 @@ async def process_business_analysis(file, analysis_type):
         
         # Read file
         content = await read_file_async(file)
-        df = pd.read_excel(BytesIO(content))
+        df = pd.read_excel(BytesIO(content), engine='openpyxl')
         console.log(f"Read {len(df)} rows, {len(df.columns)} columns")
         
         # Perform basic analysis based on type
@@ -136,6 +148,7 @@ async def process_business_analysis(file, analysis_type):
         # Get the content
         output.seek(0)
         result_content = output.read()
+        console.log(f"Generated analysis report with {len(result_content)} bytes")
         
         # Generate filename with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -151,6 +164,9 @@ async def process_business_analysis(file, analysis_type):
     except Exception as e:
         error_msg = f"❌ 分析失败：{str(e)}"
         console.error(error_msg)
+        console.error(f"Error details: {e.__class__.__name__}")
+        import traceback
+        console.error(traceback.format_exc())
         showError('business-analysis-status', error_msg)
 
 # Explicitly expose only the required functions to JavaScript
