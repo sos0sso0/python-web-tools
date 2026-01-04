@@ -31,7 +31,7 @@ Python-based Data Processing Tools - 在线访问、浏览器运行的数据处�
 
 ## 🚀 快速开始
 
-### 使用方法（推荐）
+### 使用方法
 
 1. **访问网页**：打开 [在线界面](https://sos0sso0.github.io/python-web-tools/)
 2. **选择功能**：在菜单中选择需要的功能（Excel文件合并 或 经营分析）
@@ -45,33 +45,6 @@ Python-based Data Processing Tools - 在线访问、浏览器运行的数据处�
 - 之后使用时，环境会被浏览器缓存，加载速度会更快
 - 所有处理都在浏览器中完成，完全离线工作，无需安装Python
 
-### 传统方法（需要本地Python环境）
-
-如果您希望下载Python脚本到本地运行：
-
-#### 环境要求
-
-- Python 3.6 或更高版本
-- pip (Python包管理器)
-
-#### 安装依赖
-
-```bash
-pip install pandas openpyxl matplotlib
-```
-
-#### 使用步骤
-
-1. **下载脚本**：从 `src/` 目录下载所需的Python脚本
-2. **运行脚本**：在命令行中运行脚本
-   ```bash
-   python excel_merge.py
-   # 或
-   python business_analysis.py
-   ```
-3. **按照提示操作**：根据程序提示选择要处理的文件
-4. **查看结果**：处理结果默认保存在 `D:\pyOutput` 目录
-
 ## 📁 项目结构
 
 ```
@@ -79,17 +52,13 @@ python-web-tools/
 ├── index.html              # 主网页界面
 ├── web/                    # 网页版Python代码（在浏览器中运行）
 │   └── data_processing.py  # 网页数据处理逻辑
-├── src/                    # 本地Python脚本（供下载使用）
-│   ├── excel_merge.py      # Excel文件合并工具
-│   └── business_analysis.py # 经营分析工具
 ├── docs/                   # 文档目录
 ├── DEPLOYMENT.md           # 部署和更新指南
 └── README.md               # 项目说明
 ```
 
-**重要说明**: 
+**说明**: 
 - `/web/` 目录包含在浏览器中运行的Python代码（通过PyScript）
-- `/src/` 目录包含供用户下载的独立命令行脚本
 - 要更新在线界面功能，请修改 `/web/data_processing.py`
 - 详细部署说明请参阅 [DEPLOYMENT.md](DEPLOYMENT.md)
 
