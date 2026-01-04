@@ -102,7 +102,7 @@ web/ ⭐
 ### 5. Updated README.md
 **Enhanced project documentation:**
 - Updated project structure diagram
-- Clear distinction between `/web` and `/src`
+- Focus on browser-based web functionality
 - Reference to DEPLOYMENT.md
 - Bilingual explanations
 
@@ -212,10 +212,9 @@ Users can update the online interface by:
 
 ### For Users
 1. **Web code location:** `/web/data_processing.py`
-2. **Local scripts location:** `/src/*.py`
-3. **They are separate:** Updating one doesn't affect the other
-4. **Deployment:** Push to `main` triggers auto-deploy
-5. **Documentation:** DEPLOYMENT.md has all the details
+2. **Browser-based:** All processing happens in the browser
+3. **Deployment:** Push to `main` triggers auto-deploy
+4. **Documentation:** DEPLOYMENT.md has all the details
 
 ### For Developers
 1. **Architecture:** Clear separation improves maintainability
@@ -248,6 +247,10 @@ Users can update the online interface by:
 
 **After this PR:**
 - ✅ Clear instructions for updating web interface
+- ✅ Python code in maintainable separate file
+- ✅ Focused on browser-based functionality
+- ✅ Comprehensive documentation
+- ✅ Excel files now properly formatted for MS Excel compatibility
 - ✅ Python code in maintainable separate file
 - ✅ Clear separation: `/web` vs `/src`
 - ✅ Comprehensive bilingual documentation
