@@ -13,12 +13,12 @@
 ## 📝 Short Answer
 
 To update the online interface:
-1. Edit `/web/data_processing.py` (NOT `/src/*.py`)
+1. Edit `/web/data_processing.py`
 2. Commit and push to `main` branch
 3. GitHub Actions automatically deploys in 1-2 minutes
 4. Visit https://sos0sso0.github.io/python-web-tools/
 
-**Key Insight:** The `/src` directory contains standalone CLI scripts for local download. They are NOT used by the web interface. The web interface uses `/web/data_processing.py`.
+**Key Insight:** The web interface uses `/web/data_processing.py` for browser-based Python processing.
 
 ---
 
@@ -45,20 +45,16 @@ index.html (588 lines) ✨
   ├─ JavaScript code
   └─ Loads Python from external file ✅
   
-web/ ⭐ NEW
+web/ ⭐
   ├─ data_processing.py (181 lines) - Web Python code
   └─ README.md - Web documentation
-  
-src/
-  ├─ excel_merge.py (local CLI)
-  └─ business_analysis.py (local CLI)
 ```
 
 **Benefits:** 
 - Clear separation of concerns
 - Python code maintainable in separate file
 - Better version control and syntax highlighting
-- Obvious distinction between web and local code
+- Focus on browser-based functionality
 
 ---
 

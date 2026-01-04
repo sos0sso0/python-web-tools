@@ -4,9 +4,6 @@ Python code for browser-based Excel processing using PyScript/Pyodide
 
 This file contains the Python logic that runs in the browser via PyScript.
 To update the functionality of the web interface, modify this file.
-
-Note: This is different from the /src scripts which are standalone CLI tools
-for local download and execution.
 """
 
 import asyncio

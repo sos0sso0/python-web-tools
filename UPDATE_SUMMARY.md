@@ -38,9 +38,6 @@ python-web-tools/
 ├── web/                          # 网页Python代码 / Web Python code
 │   ├── data_processing.py        # 浏览器中运行的逻辑 / Browser-based logic
 │   └── README.md                 # Web目录说明 / Web directory docs
-├── src/                          # 本地Python脚本 / Local Python scripts
-│   ├── excel_merge.py            # 命令行工具 / CLI tool
-│   └── business_analysis.py     # 命令行工具 / CLI tool
 ├── DEPLOYMENT.md                 # 部署指南 / Deployment guide
 └── README.md                     # 项目说明 / Project docs
 ```
@@ -69,12 +66,12 @@ python-web-tools/
 
 To update the online interface functionality:
 
-1. **编辑** `web/data_processing.py`（不是 `src/` 中的文件）
+1. **编辑** `web/data_processing.py`
 2. **提交并推送**到 `main` 分支
 3. **等待** 1-2 分钟让 GitHub Actions 自动部署
 4. **访问** https://sos0sso0.github.io/python-web-tools/
 
-**Edit** `web/data_processing.py` (NOT files in `src/`)
+**Edit** `web/data_processing.py`
 **Commit and push** to `main` branch
 **Wait** 1-2 minutes for GitHub Actions to auto-deploy
 **Visit** https://sos0sso0.github.io/python-web-tools/
@@ -114,17 +111,11 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for complete deployment guide.
 
 ## 重要说明 / Important Notes
 
-### ⚠️ 关键区别 / Key Difference
+### ⚠️ 关键说明 / Key Note
 
 - **`/web/data_processing.py`** → 在线界面使用（浏览器中运行）
-- **`/src/*.py`** → 本地下载使用（需要Python环境）
 
 - **`/web/data_processing.py`** → Used by online interface (runs in browser)
-- **`/src/*.py`** → For local download (requires Python environment)
-
-更新 `/src` 中的文件**不会**自动更新在线界面！
-
-Updating files in `/src` **will NOT** automatically update the online interface!
 
 ### 🔄 自动部署 / Auto Deployment
 
