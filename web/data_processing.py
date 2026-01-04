@@ -8,10 +8,11 @@ To update the functionality of the web interface, modify this file.
 
 import asyncio
 from pyodide.ffi import create_proxy
-from js import document, showSuccess, showError, Blob, URL, console
+from js import document, showSuccess, showError, Blob, URL, console, Uint8Array
 import pandas as pd
 from io import BytesIO
 from datetime import datetime
+import traceback
 
 async def read_file_async(file):
     """异步读取文件内容 / Asynchronously read file content"""
@@ -22,14 +23,14 @@ def download_file(content, filename, mime_type='application/vnd.openxmlformats-o
     """触发浏览器下载文件 / Trigger browser file download"""
     try:
         # Convert Python bytes to JavaScript Uint8Array for proper binary handling
-        from js import Uint8Array
-        # Ensure content is bytes, then convert to Uint8Array for Blob API
-        if isinstance(content, (bytes, bytearray)):
-            js_array = Uint8Array.new(len(content))
-            js_array.assign(content)
-        else:
-            # If already a buffer-like object, try direct conversion
-            js_array = Uint8Array.new(content)
+        # Ensure content is bytes or bytearray, then convert to Uint8Array for Blob API
+        if not isinstance(content, (bytes, bytearray)):
+            console.error(f"Unsupported content type: {type(content)}. Expected bytes or bytearray.")
+            return False
+        
+        # Convert to Uint8Array
+        js_array = Uint8Array.new(len(content))
+        js_array.assign(content)
         
         # Create blob with proper binary data
         blob = Blob.new([js_array], {"type": mime_type})
@@ -46,6 +47,7 @@ def download_file(content, filename, mime_type='application/vnd.openxmlformats-o
         return True
     except Exception as e:
         console.error(f"Download error: {str(e)}")
+        console.error(traceback.format_exc())
         return False
 
 async def process_excel_merge(files):
@@ -90,7 +92,6 @@ async def process_excel_merge(files):
         error_msg = f"❌ 合并失败：{str(e)}"
         console.error(error_msg)
         console.error(f"Error details: {e.__class__.__name__}")
-        import traceback
         console.error(traceback.format_exc())
         showError('excel-merge-status', error_msg)
 
@@ -165,7 +166,6 @@ async def process_business_analysis(file, analysis_type):
         error_msg = f"❌ 分析失败：{str(e)}"
         console.error(error_msg)
         console.error(f"Error details: {e.__class__.__name__}")
-        import traceback
         console.error(traceback.format_exc())
         showError('business-analysis-status', error_msg)
 
