@@ -140,7 +140,8 @@ def merge_excel_files(file_list):
         df.to_csv(output_file, encoding='utf_8_sig', index=False)
     else:
         output_file = os. path.join(OUTPUT_DIR, f"merged_result_{timestamp}. xlsx")
-        df.to_excel(output_file, index=False)
+        with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Merged Data')
     
     print(f"\n✓ 合并完成！")
     print(f"  合并后：{df.shape[0]} 行 × {df.shape[1]} 列")
