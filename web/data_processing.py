@@ -4,9 +4,6 @@ Python code for browser-based Excel processing using PyScript/Pyodide
 
 This file contains the Python logic that runs in the browser via PyScript.
 To update the functionality of the web interface, modify this file.
-
-Note: This is different from the /src scripts which are standalone CLI tools
-for local download and execution.
 """
 
 import asyncio
@@ -61,9 +58,9 @@ async def process_excel_merge(files):
         merged_df = pd.concat(dfs, ignore_index=True)
         console.log(f"Merged result has {len(merged_df)} rows")
         
-        # Save to BytesIO
+        # Save to BytesIO with explicit openpyxl engine for MS Excel compatibility
         output = BytesIO()
-        with pd.ExcelWriter(output) as writer:
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
             merged_df.to_excel(writer, index=False, sheet_name='Merged Data')
         
         # Get the content

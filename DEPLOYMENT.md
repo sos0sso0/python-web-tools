@@ -2,11 +2,11 @@
 
 ## 项目架构 / Project Architecture
 
-本项目包含两个不同的Python代码库，用于不同的目的：
+本项目是一个完全基于浏览器的Python数据处理工具，使用PyScript/Pyodide技术。
 
-This project contains two different Python codebases for different purposes:
+This project is a fully browser-based Python data processing tool using PyScript/Pyodide technology.
 
-### 1. 网页界面代码 / Web Interface Code
+### 网页界面代码 / Web Interface Code
 - **位置 / Location**: `/web/data_processing.py`
 - **用途 / Purpose**: 在浏览器中通过PyScript/Pyodide运行
 - **特点 / Features**: 
@@ -14,15 +14,6 @@ This project contains two different Python codebases for different purposes:
   - 使用异步文件读取
   - 直接触发浏览器下载
   - 所有处理在客户端完成
-
-### 2. 本地脚本代码 / Local Script Code
-- **位置 / Location**: `/src/excel_merge.py`, `/src/business_analysis.py`
-- **用途 / Purpose**: 供用户下载后在本地运行
-- **特点 / Features**:
-  - 需要本地安装Python环境
-  - 使用命令行交互
-  - 保存文件到本地磁盘
-  - 适合需要离线处理大量数据的场景
 
 ## 如何更新在线界面 / How to Update the Online Interface
 
@@ -78,24 +69,6 @@ To modify the web interface or styling:
 
 1. **编辑文件 / Edit**: `index.html`
 2. **按照方法1的步骤3-6进行 / Follow steps 3-6 from Method 1**
-
-### 方法3: 更新本地脚本 / Method 3: Update Local Scripts
-
-如果你只是更新供用户下载的本地Python脚本：
-
-If you're only updating the local Python scripts for download:
-
-1. **编辑文件 / Edit**: `/src/excel_merge.py` or `/src/business_analysis.py`
-2. **提交并推送 / Commit and push**:
-   ```bash
-   git add src/
-   git commit -m "Update local scripts"
-   git push origin main
-   ```
-
-**注意 / Note**: 更新`/src`目录中的文件**不会**自动更新网页界面的功能，因为网页使用的是`/web/data_processing.py`中的代码。
-
-Updating files in `/src` directory **will NOT** automatically update the web interface functionality, as the web uses code from `/web/data_processing.py`.
 
 ## GitHub Actions工作流 / GitHub Actions Workflow
 
@@ -167,10 +140,10 @@ Deployment is automatically handled by `.github/workflows/static.yml`:
 
 ## 文件对应关系 / File Mapping
 
-| 功能 / Function | 网页版本 / Web Version | 本地版本 / Local Version |
-|----------------|----------------------|------------------------|
-| Excel文件合并 / Excel Merge | `/web/data_processing.py` → `process_excel_merge()` | `/src/excel_merge.py` |
-| 经营分析 / Business Analysis | `/web/data_processing.py` → `process_business_analysis()` | `/src/business_analysis.py` |
+| 功能 / Function | 网页版本 / Web Version |
+|----------------|----------------------|
+| Excel文件合并 / Excel Merge | `/web/data_processing.py` → `process_excel_merge()` |
+| 经营分析 / Business Analysis | `/web/data_processing.py` → `process_business_analysis()` |
 
 ## 联系方式 / Contact
 

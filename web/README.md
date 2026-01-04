@@ -32,16 +32,6 @@ To add or modify features in the online interface:
 
 See [DEPLOYMENT.md](../DEPLOYMENT.md) for detailed instructions.
 
-## Key Differences from `/src` Scripts
-
-| Feature | Web Version (`/web`) | Local Scripts (`/src`) |
-|---------|---------------------|----------------------|
-| Execution | Browser (PyScript/Pyodide) | Local Python interpreter |
-| File Access | Browser File API | Direct filesystem access |
-| Output | Browser download | Save to disk |
-| User Input | Web form | Command-line prompts |
-| Dependencies | Auto-loaded by PyScript | Must be installed via pip |
-
 ## Adding New Dependencies
 
 If you need additional Python packages:
