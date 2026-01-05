@@ -10,7 +10,7 @@ Python-based Data Processing Tools - 在线访问、浏览器运行的数据处�
 
 ## 🌐 在线访问
 
-访问我们的在线界面：[https://sos0sso0.github.io/Excel-web-tools/]
+在线界面：[https://sos0sso0.github.io/Excel-web-tools/]
 
 ## ✨ 功能特点
 
@@ -33,12 +33,12 @@ Python-based Data Processing Tools - 在线访问、浏览器运行的数据处�
 
 ### 使用方法
 
-1. **访问网页**：打开 [在线界面](https://sos0sso0.github.io/python-web-tools/)
-2. **选择功能**：在菜单中选择需要的功能（Excel文件合并 或 经营分析）
-3. **上传文件**：点击"选择文件"按钮，选择需要处理的Excel文件
+1. **访问网页**：打开 [在线界面]([https://sos0sso0.github.io/python-web-tools/](https://sos0sso0.github.io/Excel-web-tools/))
+2. **选择功能**：在菜单中选择需要的功能
+3. **选择文件**：点击"选择文件"按钮，选择需要处理的Excel文件
 4. **开始处理**：点击"开始合并"或"开始分析"按钮
 5. **等待完成**：首次使用时需要加载Python环境（约几秒钟），之后处理速度较快
-6. **下载结果**：处理完成后，结果文件会自动下载到您的电脑
+6. **输出结果**：处理完成后，结果文件会自动下载到您的电脑
 
 **注意：** 
 - 首次使用时，PyScript会自动下载Python环境和所需库（pandas、openpyxl等），可能需要等待几秒到几十秒
