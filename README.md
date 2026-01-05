@@ -96,14 +96,10 @@ python-web-tools/
 - [ ] 性能优化（处理大文件）
 - [ ] 进度条显示
 
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
 ## 📄 许可证
 
 MIT License
 
 ## 📮 联系方式
 
-如有问题或建议，请通过GitHub Issues联系我们。
+hereistao@outlook.com
