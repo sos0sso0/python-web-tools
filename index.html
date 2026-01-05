@@ -138,6 +138,107 @@
             color: #856404;
         }
         
+        /* Animation styles for merge visualizations */
+        .merge-animation {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+        
+        .animation-container {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            position: relative;
+        }
+        
+        .animation-container.vertical {
+            flex-direction: column;
+        }
+        
+        .animation-container.horizontal {
+            flex-direction: row;
+        }
+        
+        .table-visual {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-width: 80px;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            animation: float 2s ease-in-out infinite;
+        }
+        
+        .table-visual.with-index {
+            border-left: 4px solid #ffc107;
+        }
+        
+        .table-row {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 2px;
+        }
+        
+        .table-row.index-col {
+            background: linear-gradient(90deg, #ffc107 20%, #e9ecef 20%);
+        }
+        
+        .merge-arrow {
+            font-size: 2em;
+            color: #667eea;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .result-table {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 5px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 12px rgba(40,167,69,0.3);
+            min-width: 80px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            animation: scaleIn 1s ease-in-out;
+        }
+        
+        .result-table.with-index {
+            border-left: 4px solid #ffc107;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        @keyframes scaleIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .animation-label {
+            text-align: center;
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
         code {
             background: #f4f4f4;
             padding: 2px 6px;
@@ -304,47 +405,167 @@
         </header>
         
         <div class="menu">
-            <button class="menu-item active" onclick="showSection('excel-merge')">Excel文件合并</button>
+            <button class="menu-item active" onclick="showSection('excel-merge-vertical')">Excel纵向合并</button>
+            <button class="menu-item" onclick="showSection('excel-merge-horizontal')">Excel横向合并</button>
             <button class="menu-item" onclick="showSection('business-analysis')">经营分析</button>
         </div>
         
         <div class="content">
-            <!-- Excel文件合并 Section -->
-            <div id="excel-merge" class="function-section active">
+            <!-- Excel纵向合并 Section -->
+            <div id="excel-merge-vertical" class="function-section active">
                 <div class="description">
-                    <h2>📊 Excel文件合并</h2>
-                    <p>在浏览器中直接合并多个Excel文件，无需下载或安装任何软件。所有处理均在您的浏览器中完成。</p>
+                    <h2>📊 Excel纵向合并</h2>
+                    <p>在浏览器中直接合并多个Excel文件（按行纵向合并），无需下载或安装任何软件。所有处理均在您的浏览器中完成。</p>
+                </div>
+                
+                <!-- Merge Animation Visualization -->
+                <div class="merge-animation">
+                    <div class="animation-container vertical">
+                        <div>
+                            <div class="table-visual">
+                                <div class="table-row"></div>
+                                <div class="table-row"></div>
+                                <div class="table-row"></div>
+                            </div>
+                            <div class="animation-label">表格1</div>
+                        </div>
+                        <div class="merge-arrow">↓</div>
+                        <div>
+                            <div class="table-visual">
+                                <div class="table-row"></div>
+                                <div class="table-row"></div>
+                                <div class="table-row"></div>
+                            </div>
+                            <div class="animation-label">表格2</div>
+                        </div>
+                        <div class="merge-arrow">↓</div>
+                        <div>
+                            <div class="result-table">
+                                <div class="table-row"></div>
+                                <div class="table-row"></div>
+                                <div class="table-row"></div>
+                                <div class="table-row"></div>
+                                <div class="table-row"></div>
+                                <div class="table-row"></div>
+                            </div>
+                            <div class="animation-label">合并结果</div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="upload-section">
                     <h3>选择Excel文件</h3>
-                    <p>选择需要合并的Excel文件（支持 .xlsx 和 .xls 格式）：</p>
+                    <p>选择需要纵向合并的Excel文件（支持 .xlsx 和 .xls 格式）：</p>
                     
                     <div class="file-input-wrapper">
                         <label class="file-input-label">
                             📁 选择文件
-                            <input type="file" id="excel-merge-files" multiple accept=".xlsx,.xls" onchange="handleExcelMergeFiles(event)">
+                            <input type="file" id="excel-merge-vertical-files" multiple accept=".xlsx,.xls" onchange="handleExcelMergeVerticalFiles(event)">
                         </label>
                     </div>
                     
-                    <div id="excel-merge-file-list" class="file-list">
+                    <div id="excel-merge-vertical-file-list" class="file-list">
                         <p style="color: #6c757d;">尚未选择文件</p>
                     </div>
                     
-                    <button id="excel-merge-btn" class="process-btn" onclick="mergeExcelFiles()" disabled>
-                        🔄 开始合并
+                    <button id="excel-merge-vertical-btn" class="process-btn" onclick="mergeExcelVerticalFiles()" disabled>
+                        🔄 开始纵向合并
                     </button>
                     
-                    <div id="excel-merge-status" class="status-message"></div>
+                    <div id="excel-merge-vertical-status" class="status-message"></div>
                 </div>
                 
                 <div class="instructions">
                     <h4>使用说明：</h4>
                     <ol>
-                        <li>点击"选择文件"按钮，选择需要合并的Excel文件（至少2个文件）</li>
+                        <li>点击"选择文件"按钮，选择需要纵向合并的Excel文件（至少2个文件）</li>
                         <li>查看文件列表确认选择的文件</li>
-                        <li>点击"开始合并"按钮，等待处理完成</li>
+                        <li>点击"开始纵向合并"按钮，等待处理完成</li>
                         <li>处理完成后，合并的文件会自动下载</li>
+                        <li><strong>纵向合并：</strong>将多个表格按行依次合并，所有行数据会依次排列</li>
+                        <li><strong>首次使用时，系统需要加载Python环境，可能需要等待几秒钟</strong></li>
+                    </ol>
+                </div>
+                
+                <div class="note">
+                    <strong>注意：</strong> 所有文件处理均在您的浏览器中完成，不会上传任何数据到服务器，确保您的数据完全安全。
+                </div>
+            </div>
+            
+            <!-- Excel横向合并 Section -->
+            <div id="excel-merge-horizontal" class="function-section">
+                <div class="description">
+                    <h2>📊 Excel横向合并</h2>
+                    <p>在浏览器中直接合并多个Excel文件（按列横向合并），无需下载或安装任何软件。所有处理均在您的浏览器中完成。</p>
+                </div>
+                
+                <!-- Merge Animation Visualization -->
+                <div class="merge-animation">
+                    <div class="animation-container horizontal">
+                        <div>
+                            <div class="table-visual with-index">
+                                <div class="table-row index-col"></div>
+                                <div class="table-row index-col"></div>
+                                <div class="table-row index-col"></div>
+                            </div>
+                            <div class="animation-label">表格1（含索引列）</div>
+                        </div>
+                        <div class="merge-arrow">→</div>
+                        <div>
+                            <div class="table-visual with-index">
+                                <div class="table-row index-col"></div>
+                                <div class="table-row index-col"></div>
+                                <div class="table-row index-col"></div>
+                            </div>
+                            <div class="animation-label">表格2（含索引列）</div>
+                        </div>
+                        <div class="merge-arrow">→</div>
+                        <div>
+                            <div class="result-table with-index" style="min-width: 120px;">
+                                <div class="table-row index-col"></div>
+                                <div class="table-row index-col"></div>
+                                <div class="table-row index-col"></div>
+                            </div>
+                            <div class="animation-label">合并结果（按索引）</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="upload-section">
+                    <h3>选择Excel文件</h3>
+                    <p>选择需要横向合并的Excel文件（支持 .xlsx 和 .xls 格式）：</p>
+                    
+                    <div class="note" style="margin-bottom: 15px;">
+                        <strong>⚠️ 重要提示：</strong> 横向合并会将<strong>第1列作为索引列</strong>进行匹配。索引相同的行会合并在一起，不匹配的索引行会显示为空值。请确保所有文件的第1列包含可用于匹配的索引数据。
+                    </div>
+                    
+                    <div class="file-input-wrapper">
+                        <label class="file-input-label">
+                            📁 选择文件
+                            <input type="file" id="excel-merge-horizontal-files" multiple accept=".xlsx,.xls" onchange="handleExcelMergeHorizontalFiles(event)">
+                        </label>
+                    </div>
+                    
+                    <div id="excel-merge-horizontal-file-list" class="file-list">
+                        <p style="color: #6c757d;">尚未选择文件</p>
+                    </div>
+                    
+                    <button id="excel-merge-horizontal-btn" class="process-btn" onclick="mergeExcelHorizontalFiles()" disabled>
+                        🔄 开始横向合并
+                    </button>
+                    
+                    <div id="excel-merge-horizontal-status" class="status-message"></div>
+                </div>
+                
+                <div class="instructions">
+                    <h4>使用说明：</h4>
+                    <ol>
+                        <li>点击"选择文件"按钮，选择需要横向合并的Excel文件（至少2个文件）</li>
+                        <li><strong>确保所有文件的第1列包含用于匹配的索引数据</strong></li>
+                        <li>查看文件列表确认选择的文件</li>
+                        <li>点击"开始横向合并"按钮，等待处理完成</li>
+                        <li>处理完成后，合并的文件会自动下载</li>
+                        <li><strong>横向合并：</strong>以第1列为索引，将多个表格的列横向合并。索引相同的行会合并，不同的索引会保留但其他列显示为空</li>
                         <li><strong>首次使用时，系统需要加载Python环境，可能需要等待几秒钟</strong></li>
                     </ol>
                 </div>
@@ -420,7 +641,8 @@
     
     <script>
         // Global variables to store uploaded files
-        let excelMergeFiles = [];
+        let excelMergeVerticalFiles = [];
+        let excelMergeHorizontalFiles = [];
         let businessAnalysisFile = null;
         
         // Hide loading indicator when PyScript is ready
@@ -444,23 +666,43 @@
             event.target.classList.add('active');
         }
         
-        function handleExcelMergeFiles(event) {
-            excelMergeFiles = Array.from(event.target.files);
-            const fileList = document.getElementById('excel-merge-file-list');
-            const mergeBtn = document.getElementById('excel-merge-btn');
+        function handleExcelMergeVerticalFiles(event) {
+            excelMergeVerticalFiles = Array.from(event.target.files);
+            const fileList = document.getElementById('excel-merge-vertical-file-list');
+            const mergeBtn = document.getElementById('excel-merge-vertical-btn');
             
-            if (excelMergeFiles.length === 0) {
+            if (excelMergeVerticalFiles.length === 0) {
                 fileList.innerHTML = '<p style="color: #6c757d;">尚未选择文件</p>';
                 mergeBtn.disabled = true;
             } else {
-                let html = '<p style="font-weight: bold; margin-bottom: 10px;">已选择 ' + excelMergeFiles.length + ' 个文件：</p>';
-                excelMergeFiles.forEach((file, index) => {
+                let html = '<p style="font-weight: bold; margin-bottom: 10px;">已选择 ' + excelMergeVerticalFiles.length + ' 个文件：</p>';
+                excelMergeVerticalFiles.forEach((file, index) => {
                     html += '<div class="file-item">' + 
                             '<span>📄 ' + file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)</span>' +
                             '</div>';
                 });
                 fileList.innerHTML = html;
-                mergeBtn.disabled = excelMergeFiles.length < 2;
+                mergeBtn.disabled = excelMergeVerticalFiles.length < 2;
+            }
+        }
+        
+        function handleExcelMergeHorizontalFiles(event) {
+            excelMergeHorizontalFiles = Array.from(event.target.files);
+            const fileList = document.getElementById('excel-merge-horizontal-file-list');
+            const mergeBtn = document.getElementById('excel-merge-horizontal-btn');
+            
+            if (excelMergeHorizontalFiles.length === 0) {
+                fileList.innerHTML = '<p style="color: #6c757d;">尚未选择文件</p>';
+                mergeBtn.disabled = true;
+            } else {
+                let html = '<p style="font-weight: bold; margin-bottom: 10px;">已选择 ' + excelMergeHorizontalFiles.length + ' 个文件：</p>';
+                excelMergeHorizontalFiles.forEach((file, index) => {
+                    html += '<div class="file-item">' + 
+                            '<span>📄 ' + file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)</span>' +
+                            '</div>';
+                });
+                fileList.innerHTML = html;
+                mergeBtn.disabled = excelMergeHorizontalFiles.length < 2;
             }
         }
         
@@ -481,18 +723,37 @@
             }
         }
         
-        function mergeExcelFiles() {
-            const statusDiv = document.getElementById('excel-merge-status');
-            const mergeBtn = document.getElementById('excel-merge-btn');
+        function mergeExcelVerticalFiles() {
+            const statusDiv = document.getElementById('excel-merge-vertical-status');
+            const mergeBtn = document.getElementById('excel-merge-vertical-btn');
             
             statusDiv.className = 'status-message info';
-            statusDiv.innerHTML = '<div style="display: flex; align-items: center;"><div class="loading" style="margin-right: 10px;"></div><span>正在合并Excel文件，请稍候...</span></div>';
+            statusDiv.innerHTML = '<div style="display: flex; align-items: center;"><div class="loading" style="margin-right: 10px;"></div><span>正在纵向合并Excel文件，请稍候...</span></div>';
             mergeBtn.disabled = true;
             
             // Call Python async function
             try {
-                const pythonFunc = pyscript.interpreter.globals.get('process_excel_merge');
-                pythonFunc(excelMergeFiles);
+                const pythonFunc = pyscript.interpreter.globals.get('process_excel_merge_vertical');
+                pythonFunc(excelMergeVerticalFiles);
+            } catch (error) {
+                statusDiv.className = 'status-message error';
+                statusDiv.textContent = '❌ 处理失败：' + error.message;
+                mergeBtn.disabled = false;
+            }
+        }
+        
+        function mergeExcelHorizontalFiles() {
+            const statusDiv = document.getElementById('excel-merge-horizontal-status');
+            const mergeBtn = document.getElementById('excel-merge-horizontal-btn');
+            
+            statusDiv.className = 'status-message info';
+            statusDiv.innerHTML = '<div style="display: flex; align-items: center;"><div class="loading" style="margin-right: 10px;"></div><span>正在横向合并Excel文件，请稍候...</span></div>';
+            mergeBtn.disabled = true;
+            
+            // Call Python async function
+            try {
+                const pythonFunc = pyscript.interpreter.globals.get('process_excel_merge_horizontal');
+                pythonFunc(excelMergeHorizontalFiles);
             } catch (error) {
                 statusDiv.className = 'status-message error';
                 statusDiv.textContent = '❌ 处理失败：' + error.message;
@@ -527,8 +788,10 @@
             statusDiv.textContent = message;
             
             // Re-enable button
-            if (elementId === 'excel-merge-status') {
-                document.getElementById('excel-merge-btn').disabled = false;
+            if (elementId === 'excel-merge-vertical-status') {
+                document.getElementById('excel-merge-vertical-btn').disabled = false;
+            } else if (elementId === 'excel-merge-horizontal-status') {
+                document.getElementById('excel-merge-horizontal-btn').disabled = false;
             } else if (elementId === 'business-analysis-status') {
                 document.getElementById('business-analysis-btn').disabled = false;
             }
@@ -541,8 +804,10 @@
             statusDiv.textContent = message;
             
             // Re-enable button
-            if (elementId === 'excel-merge-status') {
-                document.getElementById('excel-merge-btn').disabled = false;
+            if (elementId === 'excel-merge-vertical-status') {
+                document.getElementById('excel-merge-vertical-btn').disabled = false;
+            } else if (elementId === 'excel-merge-horizontal-status') {
+                document.getElementById('excel-merge-horizontal-btn').disabled = false;
             } else if (elementId === 'business-analysis-status') {
                 document.getElementById('business-analysis-btn').disabled = false;
             }
