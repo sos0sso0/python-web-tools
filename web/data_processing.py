@@ -50,10 +50,10 @@ def download_file(content, filename, mime_type='application/vnd.openxmlformats-o
         console.error(traceback.format_exc())
         return False
 
-async def process_excel_merge(files):
-    """处理Excel文件合并"""
+async def process_excel_merge_vertical(files):
+    """处理Excel文件纵向合并 (Vertical merge by rows)"""
     try:
-        console.log(f"Processing {len(files)} files for merge")
+        console.log(f"Processing {len(files)} files for vertical merge")
         
         # Read all files
         dfs = []
@@ -80,20 +80,92 @@ async def process_excel_merge(files):
         
         # Generate filename with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"merged_excel_{timestamp}.xlsx"
+        filename = f"merged_vertical_{timestamp}.xlsx"
         
         # Download file
         if download_file(result_content, filename):
-            showSuccess('excel-merge-status', f'✅ 合并成功！文件已下载：{filename}')
+            showSuccess('excel-merge-vertical-status', f'✅ 纵向合并成功！文件已下载：{filename}')
         else:
-            showError('excel-merge-status', '❌ 文件下载失败，请重试')
+            showError('excel-merge-vertical-status', '❌ 文件下载失败，请重试')
             
     except Exception as e:
-        error_msg = f"❌ 合并失败：{str(e)}"
+        error_msg = f"❌ 纵向合并失败：{str(e)}"
         console.error(error_msg)
         console.error(f"Error details: {e.__class__.__name__}")
         console.error(traceback.format_exc())
-        showError('excel-merge-status', error_msg)
+        showError('excel-merge-vertical-status', error_msg)
+
+async def process_excel_merge_horizontal(files):
+    """处理Excel文件横向合并 (Horizontal merge by columns with first column as index)"""
+    try:
+        console.log(f"Processing {len(files)} files for horizontal merge")
+        
+        # Read all files with first column as index
+        dfs = []
+        for i, file in enumerate(files):
+            console.log(f"Reading file: {file.name}")
+            content = await read_file_async(file)
+            
+            # Read with first column (index 0) as index
+            df = pd.read_excel(BytesIO(content), engine='openpyxl', index_col=0)
+            
+            # Validate that index has values
+            if df.index.isnull().any():
+                raise ValueError(f"文件 {file.name} 的第1列包含空值，无法作为索引列使用")
+            
+            # Warn about duplicate indices (but don't fail)
+            if df.index.duplicated().any():
+                console.warn(f'警告：文件 {file.name} 的第1列包含重复的索引值')
+            
+            # Add suffix to column names to avoid conflicts (except for first file)
+            # Note: We use i+1 for suffixes so the first file has no suffix,
+            # and subsequent files get _2, _3, etc. (not _1, _2)
+            if i > 0:
+                df = df.copy()  # Create copy to avoid modifying original
+                df.columns = [f"{col}_{i+1}" for col in df.columns]
+            
+            dfs.append(df)
+            console.log(f"Read {len(df)} rows and {len(df.columns)} columns from {file.name}")
+        
+        # Merge dataframes horizontally (concatenate by columns)
+        # axis=1: merge by columns, matching rows with same index
+        # join='outer': keep all indices from all files
+        # Rows with non-matching indices will have NaN values
+        merged_df = pd.concat(dfs, axis=1, join='outer')
+        console.log(f"Merged result has {len(merged_df)} rows and {len(merged_df.columns)} columns")
+        
+        # Save to BytesIO with explicit openpyxl engine for MS Excel compatibility
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            # Keep the index (first column) when saving
+            merged_df.to_excel(writer, sheet_name='Merged Data')
+        
+        # Get the content
+        output.seek(0)
+        result_content = output.read()
+        console.log(f"Generated Excel file with {len(result_content)} bytes")
+        
+        # Generate filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"merged_horizontal_{timestamp}.xlsx"
+        
+        # Download file
+        if download_file(result_content, filename):
+            showSuccess('excel-merge-horizontal-status', f'✅ 横向合并成功！文件已下载：{filename}')
+        else:
+            showError('excel-merge-horizontal-status', '❌ 文件下载失败，请重试')
+            
+    except ValueError as e:
+        # Handle validation errors with user-friendly messages
+        error_msg = f"❌ {str(e)}"
+        console.error(error_msg)
+        showError('excel-merge-horizontal-status', error_msg)
+    except Exception as e:
+        error_msg = f"❌ 横向合并失败：{str(e)}"
+        console.error(error_msg)
+        console.error(f"Error details: {e.__class__.__name__}")
+        console.error(traceback.format_exc())
+        showError('excel-merge-horizontal-status', error_msg)
 
 async def process_business_analysis(file, analysis_type):
     """处理经营分析"""
@@ -180,7 +252,8 @@ if not hasattr(js.pyscript.interpreter, 'globals'):
 
 # Create a safe getter that only exposes specific functions
 _exposed_functions = {
-    'process_excel_merge': process_excel_merge,
+    'process_excel_merge_vertical': process_excel_merge_vertical,
+    'process_excel_merge_horizontal': process_excel_merge_horizontal,
     'process_business_analysis': process_business_analysis
 }
 
