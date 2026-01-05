@@ -102,18 +102,43 @@ async def process_excel_merge_horizontal(files):
         
         # Read all files with first column as index
         dfs = []
-        for file in files:
+        file_suffixes = []
+        for i, file in enumerate(files):
             console.log(f"Reading file: {file.name}")
             content = await read_file_async(file)
+            
             # Read with first column (index 0) as index
             df = pd.read_excel(BytesIO(content), engine='openpyxl', index_col=0)
+            
+            # Validate that index has values
+            if df.index.isnull().any():
+                raise ValueError(f"文件 {file.name} 的第1列包含空值，无法作为索引列使用")
+            
+            # Warn about duplicate indices (but don't fail)
+            if df.index.duplicated().any():
+                console.warn(f"Warning: File {file.name} has duplicate index values in first column")
+            
             dfs.append(df)
+            # Create suffix for column names to avoid conflicts
+            file_suffix = f"_{i+1}" if len(files) > 2 else ""
+            file_suffixes.append(file_suffix)
+            
             console.log(f"Read {len(df)} rows and {len(df.columns)} columns from {file.name}")
         
         # Merge dataframes horizontally (concatenate by columns)
         # axis=1: merge by columns, matching rows with same index
         # Rows with non-matching indices will have NaN values
-        merged_df = pd.concat(dfs, axis=1)
+        # suffixes will help differentiate duplicate column names
+        if len(dfs) == 2:
+            merged_df = pd.concat(dfs, axis=1, join='outer')
+        else:
+            # For more than 2 files, concat doesn't support suffixes parameter well
+            # So we manually add suffixes to column names
+            for i, df in enumerate(dfs):
+                if i > 0:  # Don't suffix the first file's columns
+                    df.columns = [f"{col}_{i+1}" for col in df.columns]
+            merged_df = pd.concat(dfs, axis=1, join='outer')
+        
         console.log(f"Merged result has {len(merged_df)} rows and {len(merged_df.columns)} columns")
         
         # Save to BytesIO with explicit openpyxl engine for MS Excel compatibility
@@ -137,6 +162,11 @@ async def process_excel_merge_horizontal(files):
         else:
             showError('excel-merge-horizontal-status', '❌ 文件下载失败，请重试')
             
+    except ValueError as e:
+        # Handle validation errors with user-friendly messages
+        error_msg = f"❌ {str(e)}"
+        console.error(error_msg)
+        showError('excel-merge-horizontal-status', error_msg)
     except Exception as e:
         error_msg = f"❌ 横向合并失败：{str(e)}"
         console.error(error_msg)
