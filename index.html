@@ -243,6 +243,15 @@
             margin-top: 5px;
         }
         
+        .note-list {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .note-spacing {
+            margin-bottom: 15px;
+        }
+        
         code {
             background: #f4f4f4;
             padding: 2px 6px;
@@ -539,11 +548,11 @@
                     <h3>选择Excel文件</h3>
                     <p>选择需要横向合并的Excel文件（支持 .xlsx 和 .xls 格式）：</p>
                     
-                    <div class="note" style="margin-bottom: 15px;">
+                    <div class="note note-spacing">
                         <strong>⚠️ 重要提示：</strong> 横向合并会将<strong>第1列作为索引列</strong>进行匹配。索引相同的行会合并在一起，不匹配的索引行会显示为空值。
                         <br><br>
                         <strong>索引列要求：</strong>
-                        <ul style="margin-left: 20px; margin-top: 10px;">
+                        <ul class="note-list">
                             <li>第1列应包含唯一标识符（如ID、编号等）</li>
                             <li>第1列不能有空值</li>
                             <li>建议所有文件的第1列使用相同类型的数据</li>
