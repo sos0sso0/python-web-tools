@@ -115,10 +115,10 @@ async def process_excel_merge_horizontal(files):
             
             # Warn about duplicate indices (but don't fail)
             if df.index.duplicated().any():
-                console.warn(f"Warning: File {file.name} has duplicate index values in first column")
+                console.warn(f'警告：文件 {file.name} 的第1列包含重复的索引值')
             
             # Add suffix to column names to avoid conflicts (except for first file)
-            if i > 0 and len(files) > 1:
+            if i > 0:
                 df = df.copy()  # Create copy to avoid modifying original
                 df.columns = [f"{col}_{i+1}" for col in df.columns]
             
