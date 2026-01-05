@@ -102,7 +102,6 @@ async def process_excel_merge_horizontal(files):
         
         # Read all files with first column as index
         dfs = []
-        file_suffixes = []
         for i, file in enumerate(files):
             console.log(f"Reading file: {file.name}")
             content = await read_file_async(file)
@@ -118,27 +117,19 @@ async def process_excel_merge_horizontal(files):
             if df.index.duplicated().any():
                 console.warn(f"Warning: File {file.name} has duplicate index values in first column")
             
-            dfs.append(df)
-            # Create suffix for column names to avoid conflicts
-            file_suffix = f"_{i+1}" if len(files) > 2 else ""
-            file_suffixes.append(file_suffix)
+            # Add suffix to column names to avoid conflicts (except for first file)
+            if i > 0 and len(files) > 1:
+                df = df.copy()  # Create copy to avoid modifying original
+                df.columns = [f"{col}_{i+1}" for col in df.columns]
             
+            dfs.append(df)
             console.log(f"Read {len(df)} rows and {len(df.columns)} columns from {file.name}")
         
         # Merge dataframes horizontally (concatenate by columns)
         # axis=1: merge by columns, matching rows with same index
+        # join='outer': keep all indices from all files
         # Rows with non-matching indices will have NaN values
-        # suffixes will help differentiate duplicate column names
-        if len(dfs) == 2:
-            merged_df = pd.concat(dfs, axis=1, join='outer')
-        else:
-            # For more than 2 files, concat doesn't support suffixes parameter well
-            # So we manually add suffixes to column names
-            for i, df in enumerate(dfs):
-                if i > 0:  # Don't suffix the first file's columns
-                    df.columns = [f"{col}_{i+1}" for col in df.columns]
-            merged_df = pd.concat(dfs, axis=1, join='outer')
-        
+        merged_df = pd.concat(dfs, axis=1, join='outer')
         console.log(f"Merged result has {len(merged_df)} rows and {len(merged_df.columns)} columns")
         
         # Save to BytesIO with explicit openpyxl engine for MS Excel compatibility
