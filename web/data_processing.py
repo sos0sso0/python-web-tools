@@ -117,13 +117,7 @@ async def process_excel_merge_horizontal(files):
             if df.index.duplicated().any():
                 console.warn(f'警告：文件 {file.name} 的第1列包含重复的索引值')
             
-            # Add suffix to column names to avoid conflicts (except for first file)
-            # Note: We use i+1 for suffixes so the first file has no suffix,
-            # and subsequent files get _2, _3, etc. (not _1, _2)
-            if i > 0:
-                df = df.copy()  # Create copy to avoid modifying original
-                df.columns = [f"{col}_{i+1}" for col in df.columns]
-            
+            # Do not add suffix to column names - keep original names
             dfs.append(df)
             console.log(f"Read {len(df)} rows and {len(df.columns)} columns from {file.name}")
         
