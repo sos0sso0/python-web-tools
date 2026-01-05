@@ -33,7 +33,7 @@ Python-based Data Processing Tools - 在线访问、浏览器运行的数据处�
 
 ### 使用方法
 
-1. **访问网页**：打开 [在线界面]([https://sos0sso0.github.io/python-web-tools/](https://sos0sso0.github.io/Excel-web-tools/))
+1. **访问网页**：打开 [https://sos0sso0.github.io/Excel-web-tools/]
 2. **选择功能**：在菜单中选择需要的功能
 3. **选择文件**：点击"选择文件"按钮，选择需要处理的Excel文件
 4. **开始处理**：点击"开始合并"或"开始分析"按钮
